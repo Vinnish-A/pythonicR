@@ -1,19 +1,22 @@
 
+.rule = function(x_) {
+  str_detect(x_, '#') & str_count(x_, '-') > 3
+}
+
 #' bodyOf
 #'
 #' @description
-#' Build a nested list recursively by rule_.
+#' Build a nested list recursively by rule.
 #'
 #' @param vec_ File readed as vectors.
+#' @param rule_ rule.
 #'
 #' @import stringr
 #'
 #' @return Character vector, the shortest path of a certain name in a list
 #'
 #' @keywords internal
-bodyOf = function(vec_) {
-
-  rule_ = \(x_) str_detect(x_, '#') & str_count(x_, '-') > 3
+bodyOf = function(vec_, rule_) {
 
   gen_ = as.numeric(str_count(vec_, '#') == 1 & str_count(vec_, '-') > 3)
 
@@ -67,6 +70,38 @@ bodyOf = function(vec_) {
 
 }
 
+#' checkFormat
+#'
+#' @description
+#' Check if the document title levels comply with the rule.
+#'
+#' @param vec_ File readed as vectors.
+#' @param rule_ rule.
+#'
+#' @keywords internal
+checkFormat = function(vec_, rule_) {
+
+  titles_ = vec_[sapply(vec_, rule_)]
+
+  if (length(titles_) == 0) stop('No title row matches the `rule`. ')
+
+  len_ = c()
+  for (i_ in seq_along(titles_)) {
+
+    if (i_ == 1) {
+      headN_ = str_count(titles_[[1]], '#')
+      if (headN_ != 1) stop('File doesn\' t start with a level one heading.')
+      len_[[1]] = headN_
+    } else {
+      len_[[i_]] = str_count(titles_[[i_]], '#')
+      con1_ = len_[[i_]] - len_[[i_-1]] > 1
+      if (con1_) stop('Title Overleveling, which:\n', titles_[[i_]])
+    }
+
+  }
+
+}
+
 #' buildFile
 #'
 #' @description
@@ -79,16 +114,19 @@ bodyOf = function(vec_) {
 #' @return Builded nested list containing codes' head and body.
 #'
 #' @export
-buildFile = function(filename_) {
+buildFile = function(filename_, rule_ = NULL) {
+
+  if (is.null(rule_)) rule_ = .rule
 
   vec_ = suppressWarnings(readLines(filename_))
 
   vec_ = vec_[!str_detect(vec_, '^\\s*$')]
 
-  return(bodyOf(vec_)[[1]])
+  withAssume(checkFormat(vec_, rule_))
+
+  return(bodyOf(vec_, rule_)[[1]])
 
 }
-
 
 #' findWhere
 #'
