@@ -59,7 +59,7 @@ bodyOf = function(vec_, rule_) {
     res_[[i_]][condition_] = res_[[i_]][condition_] |> str_sub(2)
 
     if (T %in% rule_(res_[[i_]])) {
-      res_[[i_]] = bodyOf(res_[[i_]])
+      res_[[i_]] = bodyOf(res_[[i_]], rule_)
     }
 
   }
@@ -172,7 +172,7 @@ findWhere = function(lst_, selected_, path_ = NULL) {
 #' @return Null
 #'
 #' @export
-sourceWhich = function(filename_, selected_) {
+sourceWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path) {
 
   builded_ = buildFile(filename_)
 
@@ -220,6 +220,6 @@ sourceWhich_test = function() {
     filename_ = system.file('extdata', 'test.R', package = 'pythonicR')
   }
 
-  sourceWhich(filename_, 'part1.1')
+  sourceWhich('part1.1', filename_)
 
 }
