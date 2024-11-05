@@ -4,12 +4,14 @@
 \alias{buildContent}
 \title{bulidContent}
 \usage{
-buildContent(selected_, filename_)
+buildContent(selected_, filename_, root_ = F)
 }
 \arguments{
-\item{selected_}{part designated to source}
+\item{selected_}{part designated to source.}
 
-\item{filename_}{file to source}
+\item{filename_}{file to source.}
+
+\item{root_}{Return to the previous node or not.}
 }
 \value{
 content

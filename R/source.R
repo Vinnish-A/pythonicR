@@ -166,30 +166,33 @@ findWhere = function(lst_, selected_, path_ = NULL) {
 #' @description
 #' Return the specified module of the project file that complies with the "Vinnish" standard.
 #'
-#' @param filename_ file to source
-#' @param selected_ part designated to source
+#' @param filename_ file to source.
+#' @param selected_ part designated to source.
+#' @param root_ Return to the previous node or not.
 #'
 #' @return content
 #'
 #' @export
-buildContent = function(selected_, filename_) {
+buildContent = function(selected_, filename_, root_ = F) {
 
   builded_ = buildFile(filename_)
 
   where_ = findWhere(builded_, selected_)
+  if (root_) where_ = where_[-length(where_)]
 
   if (is.null(where_)) stop()
 
   heads_ = c()
   lst_ = builded_
-  for (ele_ in c(where_[-length(where_)], 1)) {
+  for (ele_ in append(as.list(where_[-length(where_)]), 1)) {
     heads_ = append(heads_, lst_[['head']] |> paste0(collapse = '\n'))
     lst_ = lst_[[ele_]]
   }
   head_ = paste0(heads_, collapse = '\n')
 
-  text_ = Reduce(function(x__, idx__) x__[[idx__]], where_, init = builded_) |>
-    paste0(collapse = '\n')
+  text_ = Reduce(function(x__, idx__) x__[[idx__]], where_, init = builded_)
+  if (is.list(text_)) text_ = text_[['head']]
+  text_ = paste0(text_, collapse = '\n')
 
   content_ = paste(head_, text_, sep = '\n')
 
@@ -204,19 +207,109 @@ buildContent = function(selected_, filename_) {
 #'
 #' @param filename_ file to source
 #' @param selected_ part designated to source
+#' @param env_ where to source
 #'
 #' @return Null
 #'
 #' @export
 sourceWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
 
-  content_ = buildContent(selected_, filename_)
+  content_ = buildContent(selected_, filename_, F)
 
   file_ = paste0(tempfile(), '.R')
   cat(content_, file = file_)
 
   withAssume(source(file_), env = env_)
-  # source(file_, local = env_)
+
+  invisible(file.remove(file_))
+
+}
+
+#' prepareWhich
+#'
+#' @description
+#' Prepare the specified module of the project file that complies with the "Vinnish" standard.
+#'
+#' @param filename_ file to source
+#' @param selected_ part designated to source
+#' @param env_ where to source
+#'
+#' @return Null
+#'
+#' @export
+prepareWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+
+  content_ = buildContent(selected_, filename_, T)
+
+  file_ = paste0(tempfile(), '.R')
+  cat(content_, file = file_)
+
+  withAssume(source(file_), env = env_)
+
+  invisible(file.remove(file_))
+
+}
+
+#' moveHead
+#'
+#' @param lst_
+#'
+#' @keywords internal
+moveHead = function(lst_) {
+
+  if (!is.list(lst_)) return(lst_)
+
+  if ("head" %in% names(lst_)) {
+    lst_ = lst_[c("head", setdiff(names(lst_), "head"))]
+  }
+
+  for (i in seq_along(lst_)) {
+    if (is.list(lst_[[i]])) {
+      lst_[[i]] = moveHead(lst_[[i]])
+    }
+  }
+
+  return(lst_)
+
+}
+
+#' sourceAll
+#'
+#' @description
+#' Run the specified module of the project file that complies with the "Vinnish" standard.
+#'
+#' @param filename_ file to source
+#' @param selected_ part designated to source
+#' @param env_ where to source
+#'
+#' @return Null
+#'
+#' @export
+sourceAll = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+
+  builded_ = moveHead(buildFile(filename_))
+
+  where_ = findWhere(builded_, selected_)
+
+  if (is.null(where_)) stop()
+
+  heads_ = c()
+  lst_ = builded_
+  for (ele_ in append(as.list(where_[-length(where_)]), 1)) {
+    heads_ = append(heads_, lst_[['head']] |> paste0(collapse = '\n'))
+    lst_ = lst_[[ele_]]
+  }
+  head_ = paste0(heads_, collapse = '\n')
+
+  text_ = Reduce(function(x__, idx__) x__[[idx__]], where_, init = builded_) |>
+    unlist() |> paste0(collapse = '\n')
+
+  content_ = paste(head_, text_, sep = '\n')
+
+  file_ = paste0(tempfile(), '.R')
+  cat(content_, file = file_)
+
+  withAssume(source(file_), env = env_)
 
   invisible(file.remove(file_))
 
