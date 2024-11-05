@@ -85,7 +85,7 @@ withPath = function(expr, path, mkdir = T, env = environment()) {
   setwd(path_new)
   on.exit({
     setwd(path_old)
-    if (create) unlink(path_new, recursive = T)
+    if (length(list.files(path_new)) == 0 & create) unlink(path_new, recursive = T)
   })
 
   eval(expr, envir = env)
