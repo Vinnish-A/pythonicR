@@ -178,7 +178,10 @@ withAssume = function(expr, env = environment()) {
 withBackground = function(expr) {
 
   invisible(
-    callr::r_bg(\(code) eval(parse(text = code)), args = list(code = deparse(substitute(expr))))
+    callr::r_bg(
+      \(code) eval(parse(text = code)), args = list(code = deparse(substitute(expr))),
+      user_profile = T
+    )
   )
 
 }
