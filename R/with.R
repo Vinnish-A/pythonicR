@@ -165,3 +165,20 @@ withAssume = function(expr, env = environment()) {
   )
 
 }
+
+#' withBackground
+#'
+#' @description
+#' Execute the expression in the background.
+#'
+#' @param expr raw expression
+#' @param env caller environment
+#'
+#' @export
+withBackground = function(expr) {
+
+  invisible(
+    callr::r_bg(\(code) eval(parse(text = code)), args = list(code = deparse(substitute(expr))))
+  )
+
+}
