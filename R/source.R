@@ -113,7 +113,7 @@ checkFormat = function(vec_, rule_) {
 #'
 #' @return Builded nested list containing codes' head and body.
 #'
-#' @export
+#' @keywords internal
 buildFile = function(filename_, rule_ = NULL) {
 
   if (is.null(rule_)) rule_ = .rule
@@ -161,18 +161,18 @@ findWhere = function(lst_, selected_, path_ = NULL) {
 
 }
 
-#' sourceWhich
+#' bulidContent
 #'
 #' @description
-#' Run the specified module of the project file that complies with the "Vinnish" standard.
+#' Return the specified module of the project file that complies with the "Vinnish" standard.
 #'
 #' @param filename_ file to source
 #' @param selected_ part designated to source
 #'
-#' @return Null
+#' @return content
 #'
 #' @export
-sourceWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path) {
+buildContent = function(selected_, filename_) {
 
   builded_ = buildFile(filename_)
 
@@ -193,10 +193,30 @@ sourceWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext
 
   content_ = paste(head_, text_, sep = '\n')
 
+  return(content_)
+
+}
+
+#' sourceWhich
+#'
+#' @description
+#' Run the specified module of the project file that complies with the "Vinnish" standard.
+#'
+#' @param filename_ file to source
+#' @param selected_ part designated to source
+#'
+#' @return Null
+#'
+#' @export
+sourceWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+
+  content_ = buildContent(selected_, filename_)
+
   file_ = paste0(tempfile(), '.R')
   cat(content_, file = file_)
 
-  withAssume(source(file_))
+  withAssume(source(file_), env = env_)
+  # source(file_, local = env_)
 
   invisible(file.remove(file_))
 

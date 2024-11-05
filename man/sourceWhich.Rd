@@ -4,12 +4,16 @@
 \alias{sourceWhich}
 \title{sourceWhich}
 \usage{
-sourceWhich(filename_, selected_)
+sourceWhich(
+  selected_,
+  filename_ = rstudioapi::getSourceEditorContext()$path,
+  env_ = globalenv()
+)
 }
 \arguments{
-\item{filename_}{file to source}
-
 \item{selected_}{part designated to source}
+
+\item{filename_}{file to source}
 }
 \value{
 Null

@@ -15,3 +15,4 @@ Builded nested list containing codes' head and body.
 \description{
 Build a nested list recursively by rule_.
 }
+\keyword{internal}

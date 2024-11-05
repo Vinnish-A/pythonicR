@@ -26,7 +26,7 @@
 #' @export
 withNull = function(expr, env = environment()) {
 
-  eval(expr, envir = env)
+  invisible(eval(expr, envir = env))
 
 }
 
@@ -46,7 +46,7 @@ withSleep = function(expr, maxSec = 10, env = environment()) {
   cat('Ready! \n')
   on.exit(cat('Finished! \n'))
 
-  eval(expr, envir = env)
+  invisible(eval(expr, envir = env))
 
 
 }
@@ -88,7 +88,7 @@ withPath = function(expr, path, mkdir = T, env = environment()) {
     if (length(list.files(path_new)) == 0 & create) unlink(path_new, recursive = T)
   })
 
-  eval(expr, envir = env)
+  invisible(eval(expr, envir = env))
 
 }
 
@@ -109,7 +109,7 @@ withSessions = function(expr, nWorker = 4, env = environment()) {
 
   future::plan('multisession', workers = nWorker)
   on.exit(future::plan('sequential'))
-  eval(expr, envir = env)
+  invisible(eval(expr, envir = env))
 
 }
 
@@ -126,7 +126,7 @@ withSessions = function(expr, nWorker = 4, env = environment()) {
 withMessage = function(expr, ..., sep = ' ', coloredCat = cat, env = environment()) {
 
   on.exit(coloredCat(..., sep = sep))
-  eval(expr, envir = env)
+  invisible(eval(expr, envir = env))
 
 
 }
@@ -155,17 +155,12 @@ withAssume = function(expr, env = environment()) {
   })
 
   tryCatch(
-    eval(expr, envir = env),
+    invisible(eval(expr, envir = env)),
     error = \(e) {
       message <<- e$message
       coloredCat <<- cat_red
       exit_status <<- 'Error'
       stop()
-    },
-    warning = \(w) {
-      message <<- w$message
-      coloredCat <<- cat_yellow
-      exit_status <<- 'Warning'
     }
   )
 

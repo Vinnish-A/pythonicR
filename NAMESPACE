@@ -3,7 +3,7 @@
 S3method("+",character)
 S3method("+",default)
 S3method(select,list)
-export(buildFile)
+export(buildContent)
 export(cat_green)
 export(cat_red)
 export(cat_yellow)
