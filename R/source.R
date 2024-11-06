@@ -259,7 +259,7 @@ buildAllContent = function(selected_, filename_) {
 
 }
 
-#' sourceThis
+#' runThis
 #'
 #' @description
 #' Run the specified module of the project file that complies with the "Vinnish" standard.
@@ -271,7 +271,7 @@ buildAllContent = function(selected_, filename_) {
 #' @return Null
 #'
 #' @export
-sourceThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+runThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
 
   content_ = buildContent(selected_, filename_, F)
 
@@ -309,7 +309,7 @@ prepareThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext
 
 }
 
-#' sourceThese
+#' runThese
 #'
 #' @description
 #' Run the specified module of the project file that complies with the "Vinnish" standard.
@@ -321,7 +321,7 @@ prepareThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext
 #' @return Null
 #'
 #' @export
-sourceThese = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+runThese = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
 
   content_ = buildAllContent(selected_, filename_)
 
