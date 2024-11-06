@@ -69,11 +69,9 @@ select.list = function(.data, fun_) {
 
   logics_ = lapply(.data, fun_)
 
-  if (all(sapply(logics_, is_logic_))) {
-    .data[logic_]
-  } else {
-    stop('Fun_ not suitable')
-  }
+  if (all(sapply(logics_, is_logic_))) return(.data[unlist(logics_)])
+
+  stop('fun_ not suitable')
 
 }
 
@@ -96,8 +94,6 @@ vec2copy = function(vec_) {
 docal = function(x_, fun_, ...) {
 
   params_ = lapply(as.list(match.call())[-c(1:3)], \(x__) eval(x__, envir = x_))
-  # browser()
-  # if (is.null(names(params_)) | '' %in% names(params_)) names(params_) = names(formals(fun_))
   res_ = do.call(fun_, params_)
 
   return(res_)

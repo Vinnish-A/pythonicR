@@ -200,56 +200,6 @@ buildContent = function(selected_, filename_, root_ = F) {
 
 }
 
-#' sourceWhich
-#'
-#' @description
-#' Run the specified module of the project file that complies with the "Vinnish" standard.
-#'
-#' @param filename_ file to source
-#' @param selected_ part designated to source
-#' @param env_ where to source
-#'
-#' @return Null
-#'
-#' @export
-sourceWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
-
-  content_ = buildContent(selected_, filename_, F)
-
-  file_ = paste0(tempfile(), '.R')
-  cat(content_, file = file_)
-
-  withAssume(source(file_), env = env_)
-
-  invisible(file.remove(file_))
-
-}
-
-#' prepareWhich
-#'
-#' @description
-#' Prepare the specified module of the project file that complies with the "Vinnish" standard.
-#'
-#' @param filename_ file to source
-#' @param selected_ part designated to source
-#' @param env_ where to source
-#'
-#' @return Null
-#'
-#' @export
-prepareWhich = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
-
-  content_ = buildContent(selected_, filename_, T)
-
-  file_ = paste0(tempfile(), '.R')
-  cat(content_, file = file_)
-
-  withAssume(source(file_), env = env_)
-
-  invisible(file.remove(file_))
-
-}
-
 #' moveHead
 #'
 #' @param lst_
@@ -273,19 +223,18 @@ moveHead = function(lst_) {
 
 }
 
-#' sourceAll
+#' buildAllContent
 #'
 #' @description
-#' Run the specified module of the project file that complies with the "Vinnish" standard.
+#' Return the specified module of the project file that complies with the "Vinnish" standard.
 #'
-#' @param filename_ file to source
-#' @param selected_ part designated to source
-#' @param env_ where to source
+#' @param filename_ file to source.
+#' @param selected_ part designated to source.
 #'
-#' @return Null
+#' @return content
 #'
 #' @export
-sourceAll = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+buildAllContent = function(selected_, filename_) {
 
   builded_ = moveHead(buildFile(filename_))
 
@@ -306,6 +255,26 @@ sourceAll = function(selected_, filename_ = rstudioapi::getSourceEditorContext()
 
   content_ = paste(head_, text_, sep = '\n')
 
+  return(content_)
+
+}
+
+#' sourceThis
+#'
+#' @description
+#' Run the specified module of the project file that complies with the "Vinnish" standard.
+#'
+#' @param filename_ file to source
+#' @param selected_ part designated to source
+#' @param env_ where to source
+#'
+#' @return Null
+#'
+#' @export
+sourceThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+
+  content_ = buildContent(selected_, filename_, F)
+
   file_ = paste0(tempfile(), '.R')
   cat(content_, file = file_)
 
@@ -315,24 +284,69 @@ sourceAll = function(selected_, filename_ = rstudioapi::getSourceEditorContext()
 
 }
 
-#' sourceWhich_test
+#' prepareThis
 #'
 #' @description
-#' Test for sourceWhich.
+#' Prepare the specified module of the project file that complies with the "Vinnish" standard.
 #'
-#' @importFrom pkgload is_dev_package
+#' @param filename_ file to source
+#' @param selected_ part designated to source
+#' @param env_ where to source
 #'
 #' @return Null
 #'
 #' @export
-sourceWhich_test = function() {
+prepareThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+
+  content_ = buildContent(selected_, filename_, T)
+
+  file_ = paste0(tempfile(), '.R')
+  cat(content_, file = file_)
+
+  withAssume(source(file_), env = env_)
+
+  invisible(file.remove(file_))
+
+}
+
+#' sourceThese
+#'
+#' @description
+#' Run the specified module of the project file that complies with the "Vinnish" standard.
+#'
+#' @param filename_ file to source
+#' @param selected_ part designated to source
+#' @param env_ where to source
+#'
+#' @return Null
+#'
+#' @export
+sourceThese = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+
+  content_ = buildAllContent(selected_, filename_)
+
+  file_ = paste0(tempfile(), '.R')
+  cat(content_, file = file_)
+
+  withAssume(source(file_), env = env_)
+
+  invisible(file.remove(file_))
+
+}
+
+#' fileWhenTest
+#'
+#' @importFrom pkgload is_dev_package
+#'
+#' @export
+fileWhenTest = function(file_) {
 
   if (is_dev_package('pythonicR')) {
-    filename_ = 'inst/extdata/test.R'
+    filename_ = '../../inst/extdata/' + file_
   } else {
-    filename_ = system.file('extdata', 'test.R', package = 'pythonicR')
+    filename_ = system.file('extdata', file_, package = 'pythonicR')
   }
 
-  sourceWhich('part1.1', filename_)
+  return(filename_)
 
 }
