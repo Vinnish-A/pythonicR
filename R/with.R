@@ -13,25 +13,45 @@
 #'
 #' @return what expr returns
 #'
+#' @keywords internal
+withIn = function(expr, env = environment(), ...) {
+
+  lst_param = list(...)
+  env_param = list2env(lst_param, parent = env)
+
+  invisible(eval(expr, envir = env_param))
+
+}
+
+#' withNothing
+#'
+#' @description
+#' Do nothing, only used for testing the withIn function.
+#'
+#' @param expr raw expression
+#' @param env caller environment
+#' @param ... Temporary variable
+#'
+#' @return what expr returns
+#'
 #' @examples
 #' a = 3
 #' b = 4
 #' fun = function() {
 #' a = 1
 #' b = 2
-#' withNull(a+b)
+#' withNothing(a+b)
 #' }
-#' fun() # 3
-#' withNull(a+b) # 7
+#' print(fun()) # 3
+#' print(withNothing(a + b)) # 7
+#' print(withNothing(a + b, a = 4, b = 5)) # 9
 #'
 #' @export
-withNull = function(expr, env = environment(), ...) {
+withNothing = function(expr, env = environment(), ...) {
 
   expr = substitute(expr)
-  lst_param = list(...)
-  env_param = list2env(lst_param, parent = env)
 
-  invisible(eval(expr, envir = env_param))
+  withIn(expr, env, ...)
 
 }
 
@@ -48,11 +68,13 @@ withNull = function(expr, env = environment(), ...) {
 #' @export
 withSleep = function(expr, maxSec = 10, env = environment(), ...) {
 
+  expr = substitute(expr)
+
   Sys.sleep(runif(1) * maxSec)
   cat('Ready! \n')
   on.exit(cat('Finished! \n'))
 
-  withNull(expr, env, ...)
+  withIn(expr, env, ...)
 
 
 }
@@ -76,6 +98,8 @@ withSleep = function(expr, maxSec = 10, env = environment(), ...) {
 #' @export
 withPath = function(expr, path, mkdir = T, env = environment(), ...) {
 
+  expr = substitute(expr)
+
   create = F
   path_old = getwd()
   path_new = normalizePath(path, '/', F)
@@ -95,7 +119,7 @@ withPath = function(expr, path, mkdir = T, env = environment(), ...) {
     if (length(list.files(path_new)) == 0 & create) unlink(path_new, recursive = T)
   })
 
-  withNull(expr, env, ...)
+  withIn(expr, env, ...)
 
 }
 
@@ -113,12 +137,14 @@ withPath = function(expr, path, mkdir = T, env = environment(), ...) {
 #' @export
 withSessions = function(expr, nWorker = 4, env = environment(), ...) {
 
+  expr = substitute(expr)
+
   if (future::nbrOfWorkers() > 1) plan('sequential')
 
   future::plan('multisession', workers = nWorker)
   on.exit(future::plan('sequential'))
 
-  withNull(expr, env, ...)
+  withIn(expr, env, ...)
 
 }
 
@@ -135,9 +161,11 @@ withSessions = function(expr, nWorker = 4, env = environment(), ...) {
 #' @export
 withMessage = function(expr, text, coloredCat = cat, env = environment(), ...) {
 
+  expr = substitute(expr)
+
   on.exit(coloredCat(text, sep = '\n'))
 
-  withNull(expr, env, ...)
+  withIn(expr, env, ...)
 
 }
 
@@ -151,14 +179,16 @@ withMessage = function(expr, text, coloredCat = cat, env = environment(), ...) {
 #' @param ... Temporary variable
 #'
 #' @export
-withAssume = function(expr, env = environment(), ...) {
+withAssume = function(expr, onPass = 'Success', onError = 'Error', env = environment(), ...) {
+
+  expr = substitute(expr)
 
   message = ''
   coloredCat = cat_green
-  exit_status = 'Success'
+  exit_status = onPass
 
   on.exit({
-    if (exit_status == 'Success') {
+    if (exit_status == onPass) {
       coloredCat(exit_status, '\n')
     } else {
       coloredCat(exit_status + ', message: \n' + message, '\n')
@@ -166,11 +196,11 @@ withAssume = function(expr, env = environment(), ...) {
   })
 
   tryCatch(
-    withNull(expr, env, ...),
+    withIn(expr, env, ...),
     error = \(e) {
       message <<- e$message
       coloredCat <<- cat_red
-      exit_status <<- 'Error'
+      exit_status <<- onError
       stop()
     }
   )

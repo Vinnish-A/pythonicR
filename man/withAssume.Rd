@@ -4,7 +4,13 @@
 \alias{withAssume}
 \title{withAssume}
 \usage{
-withAssume(expr, env = environment(), ...)
+withAssume(
+  expr,
+  onPass = "Success",
+  onError = "Error",
+  env = environment(),
+  ...
+)
 }
 \arguments{
 \item{expr}{raw expression}

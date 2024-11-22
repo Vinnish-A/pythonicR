@@ -122,7 +122,7 @@ buildFile = function(filename_, rule_ = NULL) {
 
   vec_ = vec_[!str_detect(vec_, '^\\s*$')]
 
-  withAssume(checkFormat(vec_, rule_))
+  withAssume(checkFormat(vec_, rule_), 'Format check passed! ', 'Format check failed...')
 
   return(bodyOf(vec_, rule_)[[1]])
 
