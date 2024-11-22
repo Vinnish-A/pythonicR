@@ -9,6 +9,7 @@
 #'
 #' @param expr raw expression
 #' @param env caller environment
+#' @param ... Temporary variable
 #'
 #' @return what expr returns
 #'
@@ -24,9 +25,13 @@
 #' withNull(a+b) # 7
 #'
 #' @export
-withNull = function(expr, env = environment()) {
+withNull = function(expr, env = environment(), ...) {
 
-  invisible(eval(expr, envir = env))
+  expr = substitute(expr)
+  lst_param = list(...)
+  env_param = list2env(lst_param, parent = env)
+
+  invisible(eval(expr, envir = env_param))
 
 }
 
@@ -38,15 +43,16 @@ withNull = function(expr, env = environment()) {
 #' @param expr raw expression
 #' @param maxSec max sleep time(in seconds)
 #' @param env caller environment
+#' @param ... Temporary variable
 #'
 #' @export
-withSleep = function(expr, maxSec = 10, env = environment()) {
+withSleep = function(expr, maxSec = 10, env = environment(), ...) {
 
   Sys.sleep(runif(1) * maxSec)
   cat('Ready! \n')
   on.exit(cat('Finished! \n'))
 
-  invisible(eval(expr, envir = env))
+  withNull(expr, env, ...)
 
 
 }
@@ -60,6 +66,7 @@ withSleep = function(expr, maxSec = 10, env = environment()) {
 #' @param path new working directory
 #' @param mkdir whether to make dir when dir doesn't exist
 #' @param env caller environment
+#' @param ... Temporary variable
 #'
 #' @examples
 #' dir.create('tmp')
@@ -67,7 +74,7 @@ withSleep = function(expr, maxSec = 10, env = environment()) {
 #' list.files('tmp') # iris.csv
 #'
 #' @export
-withPath = function(expr, path, mkdir = T, env = environment()) {
+withPath = function(expr, path, mkdir = T, env = environment(), ...) {
 
   create = F
   path_old = getwd()
@@ -88,7 +95,7 @@ withPath = function(expr, path, mkdir = T, env = environment()) {
     if (length(list.files(path_new)) == 0 & create) unlink(path_new, recursive = T)
   })
 
-  invisible(eval(expr, envir = env))
+  withNull(expr, env, ...)
 
 }
 
@@ -101,15 +108,17 @@ withPath = function(expr, path, mkdir = T, env = environment()) {
 #' @param expr raw expression
 #' @param nWorker n of sessions
 #' @param env caller environment
+#' @param ... Temporary variable
 #'
 #' @export
-withSessions = function(expr, nWorker = 4, env = environment()) {
+withSessions = function(expr, nWorker = 4, env = environment(), ...) {
 
   if (future::nbrOfWorkers() > 1) plan('sequential')
 
   future::plan('multisession', workers = nWorker)
   on.exit(future::plan('sequential'))
-  invisible(eval(expr, envir = env))
+
+  withNull(expr, env, ...)
 
 }
 
@@ -121,13 +130,14 @@ withSessions = function(expr, nWorker = 4, env = environment()) {
 #' @param expr raw expression
 #' @param text message
 #' @param env caller environment
+#' @param ... Temporary variable
 #'
 #' @export
-withMessage = function(expr, ..., sep = ' ', coloredCat = cat, env = environment()) {
+withMessage = function(expr, text, coloredCat = cat, env = environment(), ...) {
 
-  on.exit(coloredCat(..., sep = sep))
-  invisible(eval(expr, envir = env))
+  on.exit(coloredCat(text, sep = '\n'))
 
+  withNull(expr, env, ...)
 
 }
 
@@ -138,9 +148,10 @@ withMessage = function(expr, ..., sep = ' ', coloredCat = cat, env = environment
 #'
 #' @param expr raw expression
 #' @param env caller environment
+#' @param ... Temporary variable
 #'
 #' @export
-withAssume = function(expr, env = environment()) {
+withAssume = function(expr, env = environment(), ...) {
 
   message = ''
   coloredCat = cat_green
@@ -155,7 +166,7 @@ withAssume = function(expr, env = environment()) {
   })
 
   tryCatch(
-    invisible(eval(expr, envir = env)),
+    withNull(expr, env, ...),
     error = \(e) {
       message <<- e$message
       coloredCat <<- cat_red

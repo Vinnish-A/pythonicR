@@ -4,12 +4,14 @@
 \alias{withNull}
 \title{with}
 \usage{
-withNull(expr, env = environment())
+withNull(expr, env = environment(), ...)
 }
 \arguments{
 \item{expr}{raw expression}
 
 \item{env}{caller environment}
+
+\item{...}{Temporary variable}
 }
 \value{
 what expr returns

@@ -4,12 +4,14 @@
 \alias{withAssume}
 \title{withAssume}
 \usage{
-withAssume(expr, env = environment())
+withAssume(expr, env = environment(), ...)
 }
 \arguments{
 \item{expr}{raw expression}
 
 \item{env}{caller environment}
+
+\item{...}{Temporary variable}
 }
 \description{
 Print message after judging the expression exit status.
