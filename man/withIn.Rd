@@ -4,7 +4,7 @@
 \alias{withIn}
 \title{with}
 \usage{
-withIn(expr, env = environment(), ...)
+withIn(expr, env = parent.frame(), ...)
 }
 \arguments{
 \item{expr}{raw expression}
@@ -22,4 +22,3 @@ Similar to function decorators, but more flexible, the advantages are:
 2. Allow free transfer of the raw expression
 Actually, it's like the 'with' statement in Python.
 }
-\keyword{internal}

@@ -13,8 +13,8 @@
 #'
 #' @return what expr returns
 #'
-#' @keywords internal
-withIn = function(expr, env = environment(), ...) {
+#' @export
+withIn = function(expr, env = parent.frame(), ...) {
 
   lst_param = list(...)
   env_param = list2env(lst_param, parent = env)
@@ -47,7 +47,7 @@ withIn = function(expr, env = environment(), ...) {
 #' print(withNothing(a + b, a = 4, b = 5)) # 9
 #'
 #' @export
-withNothing = function(expr, env = environment(), ...) {
+withNothing = function(expr, env = parent.frame(), ...) {
 
   expr = substitute(expr)
 
@@ -66,7 +66,7 @@ withNothing = function(expr, env = environment(), ...) {
 #' @param ... Temporary variable
 #'
 #' @export
-withSleep = function(expr, maxSec = 10, env = environment(), ...) {
+withSleep = function(expr, maxSec = 10, env = parent.frame(), ...) {
 
   expr = substitute(expr)
 
@@ -96,7 +96,7 @@ withSleep = function(expr, maxSec = 10, env = environment(), ...) {
 #' list.files('tmp') # iris.csv
 #'
 #' @export
-withPath = function(expr, path, mkdir = T, env = environment(), ...) {
+withPath = function(expr, path, mkdir = T, env = parent.frame(), ...) {
 
   expr = substitute(expr)
 
@@ -135,7 +135,7 @@ withPath = function(expr, path, mkdir = T, env = environment(), ...) {
 #' @param ... Temporary variable
 #'
 #' @export
-withSessions = function(expr, nWorker = 4, env = environment(), ...) {
+withSessions = function(expr, nWorker = 4, env = parent.frame(), ...) {
 
   expr = substitute(expr)
 
@@ -159,7 +159,7 @@ withSessions = function(expr, nWorker = 4, env = environment(), ...) {
 #' @param ... Temporary variable
 #'
 #' @export
-withMessage = function(expr, text, coloredCat = cat, env = environment(), ...) {
+withMessage = function(expr, text, coloredCat = cat, env = parent.frame(), ...) {
 
   expr = substitute(expr)
 
@@ -179,7 +179,7 @@ withMessage = function(expr, text, coloredCat = cat, env = environment(), ...) {
 #' @param ... Temporary variable
 #'
 #' @export
-withAssume = function(expr, onPass = 'Success', onError = 'Error', env = environment(), ...) {
+withAssume = function(expr, onPass = 'Success', onError = 'Error', env = parent.frame(), ...) {
 
   expr = substitute(expr)
 

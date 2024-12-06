@@ -4,7 +4,7 @@
 \alias{withSleep}
 \title{withSleep}
 \usage{
-withSleep(expr, maxSec = 10, env = environment(), ...)
+withSleep(expr, maxSec = 10, env = parent.frame(), ...)
 }
 \arguments{
 \item{expr}{raw expression}

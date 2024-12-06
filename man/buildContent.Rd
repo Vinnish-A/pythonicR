@@ -4,7 +4,7 @@
 \alias{buildContent}
 \title{bulidContent}
 \usage{
-buildContent(selected_, filename_, root_ = F)
+buildContent(selected_, filename_, root_ = F, checkType_ = "strict")
 }
 \arguments{
 \item{selected_}{part designated to source.}

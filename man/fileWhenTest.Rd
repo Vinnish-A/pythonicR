@@ -4,7 +4,7 @@
 \alias{fileWhenTest}
 \title{fileWhenTest}
 \usage{
-fileWhenTest(file_)
+fileWhenTest(file_, path_ = "../../inst/extdata/")
 }
 \description{
 fileWhenTest

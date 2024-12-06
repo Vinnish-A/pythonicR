@@ -19,7 +19,7 @@ test_that(
 test_that(
   'buildAllContent finds wrong with wrong-format file', {
     expect_error(
-      buildContent('part1', fileWhenTest('wrongFormat.R'))
+      buildContent('part1', fileWhenTest('overlevel.R'))
     )
   }
 )
@@ -27,7 +27,7 @@ test_that(
 test_that(
   'buildAllContent finds wrong with wrong-format file', {
     expect_error(
-      buildAllContent('part1', fileWhenTest('wrongFormat.R'))
+      buildAllContent('part1', fileWhenTest('overlevel.R'))
     )
   }
 )

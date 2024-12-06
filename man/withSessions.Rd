@@ -4,7 +4,7 @@
 \alias{withSessions}
 \title{withSessions}
 \usage{
-withSessions(expr, nWorker = 4, env = environment(), ...)
+withSessions(expr, nWorker = 4, env = parent.frame(), ...)
 }
 \arguments{
 \item{expr}{raw expression}

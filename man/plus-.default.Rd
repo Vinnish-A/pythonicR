@@ -2,10 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{+.default}
 \alias{+.default}
-\title{`+.default`}
+\title{Default `+` method}
 \usage{
 \method{+}{default}(a, b)
 }
+\arguments{
+\item{a}{The first operand.}
+
+\item{b}{The second operand.}
+}
+\value{
+The sum of `a` and `b`.
+}
 \description{
-`+.default`
+Falls back to the base implementation of the `+` operator.
 }

@@ -4,18 +4,12 @@
 \alias{runThese}
 \title{runThese}
 \usage{
-runThese(
-  selected_,
-  filename_ = rstudioapi::getSourceEditorContext()$path,
-  env_ = globalenv()
-)
+runThese(..., filename_ = rstudioapi::getSourceEditorContext()$path)
 }
 \arguments{
-\item{selected_}{part designated to source}
+\item{...}{part designated to source}
 
 \item{filename_}{file to source}
-
-\item{env_}{where to source}
 }
 \value{
 Null

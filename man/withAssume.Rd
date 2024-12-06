@@ -8,7 +8,7 @@ withAssume(
   expr,
   onPass = "Success",
   onError = "Error",
-  env = environment(),
+  env = parent.frame(),
   ...
 )
 }

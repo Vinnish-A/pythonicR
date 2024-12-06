@@ -18,7 +18,7 @@
 #' @keywords internal
 bodyOf = function(vec_, rule_) {
 
-  gen_ = as.numeric(str_count(vec_, '#') == 1 & str_count(vec_, '-') > 3)
+  gen_ = rule_(vec_)
 
   while (T %in% rule_(vec_) & all(gen_ == 0)) {
 
@@ -68,6 +68,7 @@ bodyOf = function(vec_, rule_) {
 
   return(res_)
 
+
 }
 
 #' checkFormat
@@ -79,24 +80,40 @@ bodyOf = function(vec_, rule_) {
 #' @param rule_ rule.
 #'
 #' @keywords internal
-checkFormat = function(vec_, rule_) {
+checkFormat = function(vec_, rule_, checkType_) {
 
   titles_ = vec_[sapply(vec_, rule_)]
 
   if (length(titles_) == 0) stop('No title row matches the `rule`. ')
 
-  len_ = c()
-  for (i_ in seq_along(titles_)) {
+  if (checkType_ == 'strict') {
 
-    if (i_ == 1) {
-      headN_ = str_count(titles_[[1]], '#')
-      if (headN_ != 1) stop('File doesn\' t start with a level one heading.')
-      len_[[1]] = headN_
-    } else {
-      len_[[i_]] = str_count(titles_[[i_]], '#')
-      con1_ = len_[[i_]] - len_[[i_-1]] > 1
-      if (con1_) stop('Title Overleveling, which:\n', titles_[[i_]])
+    # 1. 检查是否符合rule
+    # 2. 检查是否存在一级标题
+    # 3. 检查同一级内的同级标题
+    # 4. 检查是否存在越级标题
+
+    len_ = c()
+    for (i_ in seq_along(titles_)) {
+
+      if (i_ == 1) {
+        headN_ = str_count(titles_[[1]], '#')
+        if (headN_ != 1) stop('File doesn\' t start with a level one heading.')
+        len_[[1]] = headN_
+      } else {
+        len_[[i_]] = str_count(titles_[[i_]], '#')
+        con1_ = len_[[i_]] - len_[[i_-1]] > 1
+        if (con1_) stop('Title Overleveling, which:\n', titles_[[i_]])
+      }
+
     }
+
+  } else if (checkType_ == 'lenient') {
+
+    # 1. 检查是否符合rule
+    # 2. 检查是否存在一级标题
+    # 3. 检查同一级内的同级标题
+
 
   }
 
@@ -114,7 +131,7 @@ checkFormat = function(vec_, rule_) {
 #' @return Builded nested list containing codes' head and body.
 #'
 #' @keywords internal
-buildFile = function(filename_, rule_ = NULL) {
+buildFile = function(filename_, rule_ = NULL, checkType_ = 'strict') {
 
   if (is.null(rule_)) rule_ = .rule
 
@@ -122,7 +139,7 @@ buildFile = function(filename_, rule_ = NULL) {
 
   vec_ = vec_[!str_detect(vec_, '^\\s*$')]
 
-  withAssume(checkFormat(vec_, rule_), 'Format check passed! ', 'Format check failed...')
+  withAssume(checkFormat(vec_, rule_, checkType_), 'Format check passed! ', 'Format check failed...')
 
   return(bodyOf(vec_, rule_)[[1]])
 
@@ -173,11 +190,21 @@ findWhere = function(lst_, selected_, path_ = NULL) {
 #' @return content
 #'
 #' @export
-buildContent = function(selected_, filename_, root_ = F) {
+buildContent = function(selected_, filename_, root_ = F, checkType_ = 'strict') {
 
-  builded_ = buildFile(filename_)
+  builded_ = buildFile(filename_, checkType_ = checkType_)
 
-  where_ = findWhere(builded_, selected_)
+  lst_ = builded_
+  path_ = c()
+  for (ele_ in selected_) {
+
+    where_ = findWhere(lst_, ele_)
+    lst_ = lst_[[where_]]
+    path_ = c(path_, where_)
+
+  }
+  where_ = path_
+
   if (root_) where_ = where_[-length(where_)]
 
   if (is.null(where_)) stop()
@@ -234,9 +261,9 @@ moveHead = function(lst_) {
 #' @return content
 #'
 #' @export
-buildAllContent = function(selected_, filename_) {
+buildAllContent = function(selected_, filename_, checkType_ = 'strict') {
 
-  builded_ = moveHead(buildFile(filename_))
+  builded_ = moveHead(buildFile(filename_, checkType_ = checkType_))
 
   where_ = findWhere(builded_, selected_)
 
@@ -265,20 +292,21 @@ buildAllContent = function(selected_, filename_) {
 #' Run the specified module of the project file that complies with the "Vinnish" standard.
 #'
 #' @param filename_ file to source
-#' @param selected_ part designated to source
-#' @param env_ where to source
+#' @param ... part designated to source
 #'
 #' @return Null
 #'
 #' @export
-runThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+runThis = function(..., filename_ = rstudioapi::getSourceEditorContext()$path, checkType_ = 'lenient') {
 
-  content_ = buildContent(selected_, filename_, F)
+  selected_ = unlist(list(...))
+
+  content_ = buildContent(selected_, filename_, F, checkType_)
 
   file_ = paste0(tempfile(), '.R')
   cat(content_, file = file_)
 
-  withAssume(source(file_), env = env_)
+  withAssume(source(file_))
 
   invisible(file.remove(file_))
 
@@ -290,20 +318,21 @@ runThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$p
 #' Prepare the specified module of the project file that complies with the "Vinnish" standard.
 #'
 #' @param filename_ file to source
-#' @param selected_ part designated to source
-#' @param env_ where to source
+#' @param ... part designated to source
 #'
 #' @return Null
 #'
 #' @export
-prepareThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+prepareThis = function(..., filename_ = rstudioapi::getSourceEditorContext()$path) {
+
+  selected_ = unlist(list(...))
 
   content_ = buildContent(selected_, filename_, T)
 
   file_ = paste0(tempfile(), '.R')
   cat(content_, file = file_)
 
-  withAssume(source(file_), env = env_)
+  withAssume(source(file_))
 
   invisible(file.remove(file_))
 
@@ -315,20 +344,21 @@ prepareThis = function(selected_, filename_ = rstudioapi::getSourceEditorContext
 #' Run the specified module of the project file that complies with the "Vinnish" standard.
 #'
 #' @param filename_ file to source
-#' @param selected_ part designated to source
-#' @param env_ where to source
+#' @param ... part designated to source
 #'
 #' @return Null
 #'
 #' @export
-runThese = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$path, env_ = globalenv()) {
+runThese = function(..., filename_ = rstudioapi::getSourceEditorContext()$path) {
+
+  selected_ = unlist(list(...))
 
   content_ = buildAllContent(selected_, filename_)
 
   file_ = paste0(tempfile(), '.R')
   cat(content_, file = file_)
 
-  withAssume(source(file_), env = env_)
+  withAssume(source(file_))
 
   invisible(file.remove(file_))
 
@@ -339,10 +369,10 @@ runThese = function(selected_, filename_ = rstudioapi::getSourceEditorContext()$
 #' @importFrom pkgload is_dev_package
 #'
 #' @export
-fileWhenTest = function(file_) {
+fileWhenTest = function(file_, path_ = '../../inst/extdata/') {
 
   if (is_dev_package('pythonicR')) {
-    filename_ = '../../inst/extdata/' + file_
+    filename_ = path_ + file_
   } else {
     filename_ = system.file('extdata', file_, package = 'pythonicR')
   }

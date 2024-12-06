@@ -4,7 +4,7 @@
 \alias{withMessage}
 \title{withMessage}
 \usage{
-withMessage(expr, text, coloredCat = cat, env = environment(), ...)
+withMessage(expr, text, coloredCat = cat, env = parent.frame(), ...)
 }
 \arguments{
 \item{expr}{raw expression}

@@ -38,32 +38,74 @@ cat_yellow = function(..., sep = ' ') {
 
 }
 
+#' Generic `+` operator
+#'
+#' This is a generic implementation of the `+` operator.
+#'
+#' @param e1 The first operand.
+#' @param e2 The second operand.
+#'
+#' @export
 `+` = function(e1, e2) {
   UseMethod("+")
 }
 
-#' `+.character`
+#' `+` method for character
+#'
+#' Concatenates two character strings.
+#'
+#' @param a A character string.
+#' @param b Another character string.
+#'
+#' @return A concatenated character string.
 #'
 #' @export
+#'
+#' @method + character
 `+.character` = function(a, b) {
   str_c(a, b)
 }
 
-#' `+.default`
+#' Default `+` method
+#'
+#' Falls back to the base implementation of the `+` operator.
+#'
+#' @param a The first operand.
+#' @param b The second operand.
+#'
+#' @return The sum of `a` and `b`.
 #'
 #' @export
+#'
+#' @method + default
 `+.default` = function(a, b) {
   base::`+`(a, b)
 }
 
-select = function (.data, ...) {
-  UseMethod("select")
-}
-
-#' select.list
+#' Generic select_lst function
+#'
+#' This is a generic function for selecting elements from a list.
+#'
+#' @param .data The input data, typically a list.
+#' @param ... Additional arguments passed to methods.
 #'
 #' @export
-select.list = function(.data, fun_) {
+select_lst = function (.data, ...) {
+  UseMethod("select_lst")
+}
+
+#' Method for select_lst with list
+#'
+#' This method applies a filtering function to a list and returns a subset of the list.
+#'
+#' @param .data A list to be filtered.
+#' @param fun_ A function that returns a single logical value for each element of the list.
+#'
+#' @return A subset of the list where `fun_` evaluates to `TRUE`.
+#'
+#' @export
+#' @method select_lst list
+select_lst.list = function(.data, fun_) {
 
   is_logic_ = \(x_) is.logical(x_) & length(x_) == 1
 

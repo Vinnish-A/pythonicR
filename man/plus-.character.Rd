@@ -2,10 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{+.character}
 \alias{+.character}
-\title{`+.character`}
+\title{`+` method for character}
 \usage{
 \method{+}{character}(a, b)
 }
+\arguments{
+\item{a}{A character string.}
+
+\item{b}{Another character string.}
+}
+\value{
+A concatenated character string.
+}
 \description{
-`+.character`
+Concatenates two character strings.
 }

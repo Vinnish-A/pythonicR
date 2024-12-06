@@ -4,7 +4,7 @@
 \alias{withNothing}
 \title{withNothing}
 \usage{
-withNothing(expr, env = environment(), ...)
+withNothing(expr, env = parent.frame(), ...)
 }
 \arguments{
 \item{expr}{raw expression}

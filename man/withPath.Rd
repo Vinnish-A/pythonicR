@@ -4,7 +4,7 @@
 \alias{withPath}
 \title{withPath}
 \usage{
-withPath(expr, path, mkdir = T, env = environment(), ...)
+withPath(expr, path, mkdir = T, env = parent.frame(), ...)
 }
 \arguments{
 \item{expr}{raw expression}
