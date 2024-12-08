@@ -38,50 +38,6 @@ cat_yellow = function(..., sep = ' ') {
 
 }
 
-#' Generic `+` operator
-#'
-#' This is a generic implementation of the `+` operator.
-#'
-#' @param e1 The first operand.
-#' @param e2 The second operand.
-#'
-#' @export
-`+` = function(e1, e2) {
-  UseMethod("+")
-}
-
-#' `+` method for character
-#'
-#' Concatenates two character strings.
-#'
-#' @param a A character string.
-#' @param b Another character string.
-#'
-#' @return A concatenated character string.
-#'
-#' @export
-#'
-#' @method + character
-`+.character` = function(a, b) {
-  str_c(a, b)
-}
-
-#' Default `+` method
-#'
-#' Falls back to the base implementation of the `+` operator.
-#'
-#' @param a The first operand.
-#' @param b The second operand.
-#'
-#' @return The sum of `a` and `b`.
-#'
-#' @export
-#'
-#' @method + default
-`+.default` = function(a, b) {
-  base::`+`(a, b)
-}
-
 #' Generic select_lst function
 #'
 #' This is a generic function for selecting elements from a list.

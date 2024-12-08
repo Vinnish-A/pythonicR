@@ -372,7 +372,7 @@ runThese = function(..., filename_ = rstudioapi::getSourceEditorContext()$path) 
 fileWhenTest = function(file_, path_ = '../../inst/extdata/') {
 
   if (is_dev_package('pythonicR')) {
-    filename_ = path_ + file_
+    filename_ = paste0(path_, file_)
   } else {
     filename_ = system.file('extdata', file_, package = 'pythonicR')
   }
