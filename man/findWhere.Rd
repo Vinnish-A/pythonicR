@@ -4,10 +4,10 @@
 \alias{findWhere}
 \title{findWhere}
 \usage{
-findWhere(lst_, selected_, path_ = NULL)
+findWhere(lst_, selected_)
 }
 \arguments{
-\item{path_}{}
+\item{selected_}{}
 }
 \value{
 Character vector, the shortest path of a certain name in a list

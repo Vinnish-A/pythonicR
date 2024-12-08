@@ -145,6 +145,28 @@ buildFile = function(filename_, rule_ = NULL, checkType_ = 'strict') {
 
 }
 
+#' flattenNames
+#'
+#' @keywords internal
+flattenNames = function(lst_, prefix_ = '') {
+
+  names_ = c()
+
+  for (name_ in names(lst_)) {
+
+    nameNow_ = paste0(prefix_, name_)
+    names_ = c(names_, nameNow_)
+
+    if (is.list(lst_[[name_]])) {
+      names_ = c(names_, flattenNames(lst_[[name_]], paste0(nameNow_, '-')))
+    }
+
+  }
+
+  return(names_)
+
+}
+
 #' findWhere
 #'
 #' @description
@@ -152,29 +174,28 @@ buildFile = function(filename_, rule_ = NULL, checkType_ = 'strict') {
 #'
 #' @param lst_
 #' @param selected_
-#' @param path_
 #'
 #' @return Character vector, the shortest path of a certain name in a list
 #'
 #' @keywords internal
-findWhere = function(lst_, selected_, path_ = NULL) {
+findWhere = function(lst_, selected_) {
 
-  for (name_ in names(lst_)) {
+  flattened_ = flattenNames(lst_) |> grep('head', x = _, invert = T, value = T)
 
-    path_new_ = c(path_, name_)
+  quanlified_ = flattened_
+  for (ele_ in selected_) {
 
-    if (identical(name_, selected_)) return(path_new_)
-
-    if (is.list(lst_[[name_]])) {
-
-      res_ = findWhere(lst_[[name_]], selected_, path_new_)
-      if (!is.null(res_)) return(res_)
-
-    }
+    quanlified_ = grep(ele_, quanlified_, value = T)
 
   }
 
-  return(NULL)
+  if (length(quanlified_) > 1) {
+    stop(paste0(c('Results obtained from the provided path are not unique: ', quanlified_), collapse = '\n'))
+  } else if (length(quanlified_) == 0) {
+    stop('Results obtained from the provided path are NULL')
+  } else {
+    return(str_split(quanlified_, '-')[[1]])
+  }
 
 }
 
@@ -236,8 +257,8 @@ moveHead = function(lst_) {
 
   if (!is.list(lst_)) return(lst_)
 
-  if ("head" %in% names(lst_)) {
-    lst_ = lst_[c("head", setdiff(names(lst_), "head"))]
+  if ('head' %in% names(lst_)) {
+    lst_ = lst_[c('head', setdiff(names(lst_), 'head'))]
   }
 
   for (i in seq_along(lst_)) {
@@ -361,22 +382,5 @@ runThese = function(..., filename_ = rstudioapi::getSourceEditorContext()$path) 
   withAssume(source(file_))
 
   invisible(file.remove(file_))
-
-}
-
-#' fileWhenTest
-#'
-#' @importFrom pkgload is_dev_package
-#'
-#' @export
-fileWhenTest = function(file_, path_ = '../../inst/extdata/') {
-
-  if (is_dev_package('pythonicR')) {
-    filename_ = paste0(path_, file_)
-  } else {
-    filename_ = system.file('extdata', file_, package = 'pythonicR')
-  }
-
-  return(filename_)
 
 }

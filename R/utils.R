@@ -98,3 +98,85 @@ docal = function(x_, fun_, ...) {
 
 }
 
+#' Generic `+` operator
+#'
+#' This is a generic implementation of the `+` operator.
+#'
+#' @param a The first operand.
+#' @param b The second operand.
+#'
+#' @export
+`+` = function(a, b) {
+  UseMethod("+")
+}
+
+#' `+` method for character
+#'
+#' Concatenates two character strings.
+#'
+#' @param a A character string.
+#' @param b Another character string.
+#'
+#' @return A concatenated character string.
+#'
+#' @export
+#'
+#' @method + character
+`+.character` = function(a, b) {
+  str_c(a, b)
+}
+
+#' Default `+` method
+#'
+#' Falls back to the base implementation of the `+` operator.
+#'
+#' @param a The first operand.
+#' @param b The second operand.
+#'
+#' @return The sum of `a` and `b`.
+#'
+#' @export
+#'
+#' @method + default
+`+.default` = function(a, b) {
+  base::`+`(a, b)
+}
+
+
+#' findGit
+#'
+#' @keywords internal
+findGit = function() {
+
+  path_ = getwd()
+  while (!file.exists(file.path(path_, '.git'))) {
+    parent_ = dirname(path_)
+    if (parent_ == path_) {
+      stop('No .git directory found')
+    }
+    path_ = parent_
+  }
+
+  return(path_)
+
+}
+
+#' fileWhenTest
+#'
+#' @importFrom pkgload is_dev_package
+#'
+#' @export
+fileWhenTest = function(file_, project_ = 'pythonicR') {
+
+  if (is_dev_package(project_)) {
+    filename_ = file.path(findGit(), 'inst/extdata', file_)
+  } else {
+    filename_ = system.file('extdata', file_, package = project_)
+  }
+
+  return(filename_)
+
+}
+
+
+
