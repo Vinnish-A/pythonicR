@@ -1,7 +1,13 @@
 ---
 title: 使用`pythonicR`进行探索性数据分析
-output: html_document
+output:
+  html_document:
+    theme: cerulean
+    highlight: tango
+    css: style.css
 ---
+
+> 没有银弹
 
 本册/软件包是Vinnish本人的个人经验总结, 旨在规范, 管理数据分析项目中产生的R代码文件. 其它内容, 如实际生物数据分析中可能需要的简化步骤, 见姊妹软件包`bioTool`. 
 
@@ -49,6 +55,8 @@ output: html_document
 
 围绕这几点, 我们可以构建一个抽象的示例代码. 
 
+<details>
+<summary>代码结构示例</summary>
 ```
 # 一级标题 ----
 
@@ -70,6 +78,8 @@ output: html_document
 
 # 代码内容
 ```
+</details>
+</br>
 
 对于`二级标题1`而言, `一级标题`下的代码内容可以称为`二级标题1`的`头`, `二级标题1`下的代码内容应当仅依赖其头中定义的内容. 在实际的需求下, 一个示例可以为: 
 
@@ -94,7 +104,9 @@ output: html_document
 
 如下是一个用于简单情形下合并两个seurat对象的元信息的函数, 其潜在的假设是df_包含行名, 也包含与行名相同的列cell. 其实现的功能简单, 但是会被用到多次, 故标注为'disposable'. 标注为'disposable'因为可能需要修改不建议写在代码的头部, 而是与其它变量一样随用随定义. 
 
-```{r}
+<details>
+<summary>disposable示例</summary>
+```
 # disposable
 mergePhen = function(df_, phen_ = phen) {
 
@@ -105,10 +117,14 @@ mergePhen = function(df_, phen_ = phen) {
 
 }
 ```
+</details>
+</br>
 
 经过抽象后能实现一定功能的实用函数, 但是尚未测试, 潜在使用场景未确定, 或参数不充分的函数可以标注为'unstable'. 这类函数可以定义于代码的头部, 位于包加载的下方. 于下一个工作阶段前在归档在utils中. 
 
-```{r}
+<details>
+<summary>unstable示例</summary>
+```
 library(ggplot2)
 
 # 为什么标注为unstable: 
@@ -173,8 +189,58 @@ plot_rain = function(dp_, x_, group_, title_) {
 
 }
 ```
+</details>
+</br>
 
 成熟的函数, 建议归档到私人或公开库中. 
 
-#### 命名 
+#### 命名与变量 
 
+在实际场景下, 我们可能面临纵向和横向的多级标题, 对于每一级标题下的数据主体, 采用数据结构或数据建议描述+标题层级简写, 以下划线隔开的命名. 如某一阶段, 我们需要分析人类和小鼠中的T细胞,和巨噬细胞. 我们可以按照如下标题进行分组. 对于人巨噬细胞的seurat对象, 可以命名为`seu_hs_ma`. 
+
+<details>
+<summary>命名示例</summary>
+```
+# 20241211 ------
+
+
+library(Seurat)
+library(qs)
+# ...
+
+## Hs ----
+
+seu_hs = qread('xxx')
+# ...
+
+### T ----
+
+### Macrophage ----
+
+## Mm ----
+
+### T ----
+
+### Macrophage ----
+
+```
+</details>
+</br>
+
+对于中间变量, 可以使用与上述相似的命名方式, 但对于一些意义较小的变量, 我们可能不倾向于使用冗长的名字, 但又希望即使销毁这些意义不大但有可能被其它层次使用的变量名. 例如希望等比例减小导出的图片. 这里可以借用表达式性质或with函数隔离全局环境. 
+
+<details>
+<summary>中间变量示例</summary>
+```
+# 借用表达式
+{
+    sf = 1.2 # size factor
+    ggsave('path/name.png', p, width = 12/sf, height = 12/sf)
+}
+
+# 借用pythonicR的with函数
+withNothing(ggsave('path/name.png', p, width = 12/sf, height = 12/sf), sf = 1.2) # 不执行其它功能
+withPath(ggsave('name.png', p, width = 12/sf, height = 12/sf), 'path', sf = 1.2) # 后置路径
+```
+</details>
+</br>
