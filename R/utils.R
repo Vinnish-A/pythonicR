@@ -102,46 +102,45 @@ docal = function(x_, fun_, ...) {
 #'
 #' This is a generic implementation of the `+` operator.
 #'
-#' @param a The first operand.
-#' @param b The second operand.
+#' @param e1 The first operand.
+#' @param e2 The second operand.
 #'
 #' @export
-`+` = function(a, b) {
+`+` = function(e1, e2) {
   UseMethod("+")
-}
-
-#' `+` method for character
-#'
-#' Concatenates two character strings.
-#'
-#' @param a A character string.
-#' @param b Another character string.
-#'
-#' @return A concatenated character string.
-#'
-#' @export
-#'
-#' @method + character
-`+.character` = function(a, b) {
-  str_c(a, b)
 }
 
 #' Default `+` method
 #'
 #' Falls back to the base implementation of the `+` operator.
 #'
-#' @param a The first operand.
-#' @param b The second operand.
+#' @param e1 The first operand.
+#' @param e2The second operand.
 #'
-#' @return The sum of `a` and `b`.
+#' @return The sum of `e1` and `e2`.
 #'
 #' @export
 #'
 #' @method + default
-`+.default` = function(a, b) {
-  base::`+`(a, b)
+`+.default` = function(e1, e2) {
+  base::`+`(e1, e2)
 }
 
+#' `+` method for character
+#'
+#' Concatenates two character strings.
+#'
+#' @param e1 A character string.
+#' @param e2 Another character string.
+#'
+#' @return A concatenated character string.
+#'
+#' @export
+#'
+#' @method + character
+`+.character` = function(e1, e2) {
+  str_c(e1, e2)
+}
 
 #' findGit
 #'

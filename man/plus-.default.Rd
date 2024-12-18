@@ -4,15 +4,15 @@
 \alias{+.default}
 \title{Default `+` method}
 \usage{
-\method{+}{default}(a, b)
+\method{+}{default}(e1, e2)
 }
 \arguments{
-\item{a}{The first operand.}
+\item{e1}{The first operand.}
 
-\item{b}{The second operand.}
+\item{e2The}{second operand.}
 }
 \value{
-The sum of `a` and `b`.
+The sum of `e1` and `e2`.
 }
 \description{
 Falls back to the base implementation of the `+` operator.

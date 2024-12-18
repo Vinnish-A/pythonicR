@@ -4,12 +4,12 @@
 \alias{+}
 \title{Generic `+` operator}
 \usage{
-a + b
+e1 + e2
 }
 \arguments{
-\item{a}{The first operand.}
+\item{e1}{The first operand.}
 
-\item{b}{The second operand.}
+\item{e2}{The second operand.}
 }
 \description{
 This is a generic implementation of the `+` operator.

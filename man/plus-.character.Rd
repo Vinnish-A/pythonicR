@@ -4,12 +4,12 @@
 \alias{+.character}
 \title{`+` method for character}
 \usage{
-\method{+}{character}(a, b)
+\method{+}{character}(e1, e2)
 }
 \arguments{
-\item{a}{A character string.}
+\item{e1}{A character string.}
 
-\item{b}{Another character string.}
+\item{e2}{Another character string.}
 }
 \value{
 A concatenated character string.

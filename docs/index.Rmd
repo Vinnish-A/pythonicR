@@ -1,5 +1,5 @@
 ---
-title: 使用`pythonicR`进行探索性数据分析
+title: 使用`bioScript`进行探索性数据分析
 output:
   html_document:
     theme: cerulean
@@ -9,9 +9,9 @@ output:
 
 > 没有银弹
 
-[<img src="pic/badge.png" class="right-image">](https://github.com/Vinnish-A/pythonicR)本册/软件包是Vinnish本人的个人经验总结, 旨在规范, 管理数据分析项目中产生的R代码文件. 其它内容, 如实际生物数据分析中可能需要的简化步骤, 见姊妹软件包`bioTool`. 本册/软件包的目的只在于提供提供应用R进行探索性数据分析方法的某种建议或参考, 包本身也许不能为分析过程带来方便, 真正重要的是理解工作的需求与内容.
+[<img src="pic/badge.png" class="right-image">](https://github.com/Vinnish-A/bioScript)本册/软件包是Vinnish本人的个人经验总结, 旨在规范, 管理数据分析项目中产生的R代码文件, 分属项目`bioFlow`的元编程模块. 其它内容, 如实际生物数据分析中可能需要的简化步骤, 见姊妹软件包`bioTool`. 本册/软件包的目的只在于提供提供应用R进行探索性数据分析方法的某种建议或参考, 包本身也许不能为分析过程带来方便, 真正重要的是理解工作的需求与内容.
 
-如果您有疑问或补充, 请随时提出问题! 本包仓库: [Vinnish-A/pythonicR](https://github.com/Vinnish-A/pythonicR). 
+如果您有疑问或补充, 请随时提出问题! 本包仓库: [Vinnish-A/bioScript](https://github.com/Vinnish-A/bioScript). 
 
 ## 探索性数据分析
 
@@ -83,7 +83,7 @@ output:
 </details>
 </br>
 
-笔者主要使用rstudio作为r代码编辑的IDE, 本包功能实现部分依赖rstudioapi完成. rstudio中, 使用`Ctrl+Shift+R`添加一级标题, n个`#`后标题后接四个及以上`-`添加n级标题, 右上标识可显示标题结构. 未来, pythonicR会添加对Rmd, Qmd等文档的支持, 并添加在vscode, positron中的标题结构预览支持. 需要注意的是, 由于pythonicR使用`|`作为分隔符, 标题中不允许出现'|'. 
+笔者主要使用rstudio作为r代码编辑的IDE, 本包功能实现部分依赖rstudioapi完成. rstudio中, 使用`Ctrl+Shift+R`添加一级标题, n个`#`后标题后接四个及以上`-`添加n级标题, 右上标识可显示标题结构. 未来, bioScript会添加对Rmd, Qmd等文档的支持, 并添加在vscode, positron中的标题结构预览支持. 需要注意的是, 由于bioScript使用`|`作为分隔符, 标题中不允许出现'|'. 
 
 对于`二级标题1`而言, `一级标题`下的代码内容可以称为`二级标题1`的`头`, `二级标题1`下的代码内容应当仅依赖其头中定义的内容. 同理, `二级标题1`下的`三级标题1`应当仅依赖`二级标题1`与`一级标题`下的代码内容. 在实际的需求下, 一个示例可以为: 
 
@@ -270,16 +270,16 @@ seu_hs = qread('xxx')
     ggsave('path/name.png', p, width = 12/sf, height = 12/sf)
 }
 
-# 借用pythonicR的with函数
+# 借用bioScript的with函数
 withNothing(ggsave('path/name.png', p, width = 12/sf, height = 12/sf), sf = 1.2) # 不执行其它功能
 withPath(ggsave('name.png', p, width = 12/sf, height = 12/sf), 'path', sf = 1.2) # 后置路径
 ```
 </details>
 </br>
 
-### pythonicR如何帮助施行EDA? 
+### bioScript如何帮助施行EDA? 
 
-以下标题层级将作为示例讲述pythonicR的功能. 
+以下标题层级将作为示例讲述bioScript的功能. 
 
 <details>
 <summary>**层级示例**</summary>
@@ -312,11 +312,11 @@ seu_hs = qread('xxx')
 
 #### 索引, 拆分代码
 
-EDA的任务未必是在一天内完成, 也不意味着我们每次总是需要保存或运行所有层级. 当我们需要浏览或补充某一层级的内容时, 只需要运行所需的层级. 如需得知人T细胞模块, 则依次运行'20241211-Hs-T'下的代码内容. 然而随层级数量增多, 按顺序运行会显得繁琐. pythonicR一开始就是出于简化这一步骤的目的而开发. pythonicR内置的runThis, runThese, prepareThis主要用于实现这一功能. 
+EDA的任务未必是在一天内完成, 也不意味着我们每次总是需要保存或运行所有层级. 当我们需要浏览或补充某一层级的内容时, 只需要运行所需的层级. 如需得知人T细胞模块, 则依次运行'20241211-Hs-T'下的代码内容. 然而随层级数量增多, 按顺序运行会显得繁琐. bioScript一开始就是出于简化这一步骤的目的而开发. bioScript内置的runThis, runThese, prepareThis主要用于实现这一功能. 
 
-`pythonicR::runThis`包含两个主要参数, `...`与`filename_`, 其中`filename_`为需要运行的文件路径, 如果是当前正在编辑的文档往往由rstudioapi自动填充. `...`接收需要运行到的唯一标识路径, 可以为多个字符串向量, 如`pythonicR::runThis('Hs', 'T')`, 或单个字符串而以`|`隔开, 如`pythonicR::runThis('Hs|T')`. 唯一标识路径表示能够搜索到且仅能搜索到指定标题的标题组合, 如搜索到的标题多于一个, 如`pythonicR::runThis('T')`, 则会报错. 需要注意的是`pythonicR::runThis`只会运行到此标题下代码内容, 但不会运行标题下包含的下级标题的代码内容, 如`pythonicR::runThis('Hs')`不会运行其下的T与Macrophage. 
+`bioScript::runThis`包含两个主要参数, `...`与`filename_`, 其中`filename_`为需要运行的文件路径, 如果是当前正在编辑的文档往往由rstudioapi自动填充. `...`接收需要运行到的唯一标识路径, 可以为多个字符串向量, 如`bioScript::runThis('Hs', 'T')`, 或单个字符串而以`|`隔开, 如`bioScript::runThis('Hs|T')`. 唯一标识路径表示能够搜索到且仅能搜索到指定标题的标题组合, 如搜索到的标题多于一个, 如`bioScript::runThis('T')`, 则会报错. 需要注意的是`bioScript::runThis`只会运行到此标题下代码内容, 但不会运行标题下包含的下级标题的代码内容, 如`bioScript::runThis('Hs')`不会运行其下的T与Macrophage. 
 
-`pythonicR::runThese`与`pythonicR::runThis`类似, 但可运行标题下包含的下级标题的代码内容. `pythonicR::prepareThis`会运行指定标题之前的代码内容, 即运行指定标题的头以准备好其所依赖的环境. `pythonicR::prepareThis('Hs', 'T')`等价于`pythonicR::runThis('Hs')`. 
+`bioScript::runThese`与`bioScript::runThis`类似, 但可运行标题下包含的下级标题的代码内容. `bioScript::prepareThis`会运行指定标题之前的代码内容, 即运行指定标题的头以准备好其所依赖的环境. `bioScript::prepareThis('Hs', 'T')`等价于`bioScript::runThis('Hs')`. 
 
 #### with函数簇消除状态的副作用
 
@@ -325,7 +325,7 @@ with函数簇往往被用于暂时的改变表达式执行时的状态, 当表�
 1. 无需了解原始函数的参数；
 2. 允许自由传递原始表达式; 
 
-目标pythonicR中设计了以下with函数: 
+目标bioScript中设计了以下with函数: 
 
 - `withSessions`用于开启多进程, 多进程功能基于future. 
 - `withMessgae`在表达式执行完毕后在控制台上打印内容. 
